@@ -187,53 +187,56 @@ try {
 }catch(err) {
     
 }
-//********************* */
-/*     Contact us       */
-//********************* */
-try {
-    // Contact Form
-    function validateForm() {
-        var name = document.forms["myForm"]["name"].value;
-        var email = document.forms["myForm"]["email"].value;
-        var subject = document.forms["myForm"]["subject"].value;
-        var comments = document.forms["myForm"]["comments"].value;
-        document.getElementById("error-msg").style.opacity = 0;
-        document.getElementById('error-msg').innerHTML = "";
-        if (name == "" || name == null) {
-            document.getElementById('error-msg').innerHTML = "<div class='alert alert-warning error_message'>*Please enter a Name*</div>";
-            fadeIn();
-            return false;
-        }
-        if (email == "" || email == null) {
-            document.getElementById('error-msg').innerHTML = "<div class='alert alert-warning error_message'>*Please enter a Email*</div>";
-            fadeIn();
-            return false;
-        }
-        if (subject == "" || subject == null) {
-            document.getElementById('error-msg').innerHTML = "<div class='alert alert-warning error_message'>*Please enter a Subject*</div>";
-            fadeIn();
-            return false;
-        }
-        if (comments == "" || comments == null) {
-            document.getElementById('error-msg').innerHTML = "<div class='alert alert-warning error_message'>*Please enter a Comments*</div>";
-            fadeIn();
-            return false;
-        }
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("simple-msg").innerHTML = this.responseText;
-                document.forms["myForm"]["name"].value = "";
-                document.forms["myForm"]["email"].value = "";
-                document.forms["myForm"]["subject"].value = "";
-                document.forms["myForm"]["comments"].value = "";
-            }
-        };
-        xhttp.open("POST", "php/contact.php", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("name=" + name + "&email=" + email + "&subject=" + subject + "&comments=" + comments);
-        return false;
-    }
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+var lazyloadImages;    
+if ("IntersectionObserver" in window) {
+lazyloadImages = document.querySelectorAll(".img-responsive");
+var imageObserver = new IntersectionObserver(function(entries, observer) {
+entries.forEach(function(entry) {
+if (entry.isIntersecting) {
+var image = entry.target;
+image.src = image.dataset.src;
+image.classList.remove("img-responsive");
+imageObserver.unobserve(image);
+}
+});
+});
+lazyloadImages.forEach(function(image) {
+imageObserver.observe(image);
+});
+} else {  
+var lazyloadThrottleTimeout;
+lazyloadImages = document.querySelectorAll(".img-responsive");
+
+function lazyload () {
+if(lazyloadThrottleTimeout) {
+clearTimeout(lazyloadThrottleTimeout);
+}    
+lazyloadThrottleTimeout = setTimeout(function() {
+var scrollTop = window.pageYOffset;
+lazyloadImages.forEach(function(img) {
+if(img.offsetTop < (window.innerHeight + scrollTop)) {
+img.src = img.dataset.src;
+img.classList.remove('img-responsive');
+}
+});
+if(lazyloadImages.length == 0) { 
+document.removeEventListener("scroll", lazyload);
+window.removeEventListener("resize", lazyload);
+window.removeEventListener("orientationChange", lazyload);
+}
+}, 20);
+}
+document.addEventListener("scroll", lazyload);
+window.addEventListener("resize", lazyload);
+window.addEventListener("orientationChange", lazyload);
+}
+})
+
+
 
     function fadeIn() {
         var fade = document.getElementById("error-msg");
